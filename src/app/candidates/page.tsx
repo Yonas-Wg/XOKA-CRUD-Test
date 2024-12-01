@@ -24,7 +24,7 @@ const CandidatesPage = () => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await axios.get<{ id: string; name: string }[]>('https://xoka-hr-management.vercel.app/companies');
+        const response = await axios.get<{ id: string; name: string }[]>('http://localhost:3000/companies');
         setCompanies(response.data);
       } catch (error) {
         console.error('Error fetching companies:', error);
@@ -33,7 +33,7 @@ const CandidatesPage = () => {
   
     const fetchCandidates = async () => {
       try {
-        const response = await axios.get<Candidate[]>('https://xoka-hr-management.vercel.app/candidates');
+        const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
         setCandidates(response.data);
       } catch (error) {
         console.error('Error fetching candidates:', error);
@@ -65,13 +65,13 @@ const CandidatesPage = () => {
     onSubmit: async (values) => {
       try {
         if (editingCandidate) {
-          await axios.put(`https://xoka-hr-management.vercel.app/candidates/${editingCandidate.id}`, values);
+          await axios.put(`http://localhost:3000/candidates/${editingCandidate.id}`, values);
         } else {
-          await axios.post('https://xoka-hr-management.vercel.app/candidates', values);
+          await axios.post('http://localhost:3000/candidates', values);
         }
         formik.resetForm();
         setEditingCandidate(null);
-        const response = await axios.get<Candidate[]>('https://xoka-hr-management.vercel.app/candidates');
+        const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
         setCandidates(response.data);
       } catch (error) {
         console.error('Error saving candidate:', error);
@@ -93,7 +93,7 @@ const CandidatesPage = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`https://xoka-hr-management.vercel.app/candidates/${id}`);
+      await axios.delete(`http://localhost:3000/candidates/${id}`);
       setCandidates((prev) => prev.filter((candidate) => candidate.id !== id));
     } catch (error) {
       console.error('Error deleting candidate:', error);
