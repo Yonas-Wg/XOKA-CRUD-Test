@@ -123,13 +123,9 @@ const getSalaryAmountById = (salaryId: string) => {
   
     const updatedEmployeePayload = {
       id: values.id, 
-      name: values.name, 
       companyId: values.company, 
       departmentId: values.department, 
       salaryId: values.salary.toString(), 
-      salary: values.salary,  
-      company: values.company, 
-  department: values.name, 
     };
   
     // Call the API to update the employee with the correct ID and payload

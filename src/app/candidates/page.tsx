@@ -197,28 +197,36 @@ const CandidatesPage = () => {
       </Typography>
 
       <Paper sx={{ padding: 2 }}>
-        {candidates.map((candidate) => (
-          <Box key={candidate.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-            <Typography>{candidate.firstName} {candidate.lastName}</Typography>
-            <Box>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => handleEdit(candidate)}
-                sx={{ marginRight: 2 }}
-              >
-                Edit
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={() => handleDelete(candidate.id)}
-              >
-                Delete
-              </Button>
-            </Box>
+      {candidates.map((candidate) => (
+        <Paper key={candidate.id} sx={{ padding: 3, mb: 3, display: 'flex', justifyContent: 'space-between', boxShadow: 3 }}>
+          <Box sx={{ flex: 1 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+              {candidate.firstName} {candidate.lastName}
+            </Typography>
+            <Typography variant="body1" color="textSecondary">Email: {candidate.email}</Typography>
+            <Typography variant="body1" color="textSecondary">Phone: {candidate.phone}</Typography>
+            <Typography variant="body1" color="textSecondary">Position: {candidate.position}</Typography>
+            <Typography variant="body2" color="textSecondary">Applied At: {new Date(candidate.appliedAt).toLocaleString()}</Typography>
           </Box>
-        ))}
+          
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+            <Button
+              color="primary"
+              onClick={() => handleEdit(candidate)}
+              sx={{ mb: 1, width: '100%' }}
+            >
+              Edit
+            </Button>
+            <Button
+              color="error"
+              onClick={() => handleDelete(candidate.id)}
+              sx={{ width: '100%' }}
+            >
+              Delete
+            </Button>
+          </Box>
+        </Paper>
+      ))}
       </Paper>
     </Box>
   );
