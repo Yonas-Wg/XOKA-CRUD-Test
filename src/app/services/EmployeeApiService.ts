@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Employee } from '../services/DatabaseService'; 
 import { v4 as uuidv4 } from 'uuid';  
 
-const API_URL = 'http://localhost:3000/employees'; 
+const API_URL = 'https://xoka-hr-management.vercel.app/employees'; 
 
 // Fetch all employees
 export const getEmployees = async (): Promise<Employee[]> => {

@@ -18,7 +18,7 @@ const AddCompany = () => {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/companies');
+        const response = await axios.get('https://xoka-hr-management.vercel.app/companies');
         setCompanies(response.data);
       } catch (error) {
         setErrorMessage('Failed to fetch companies');
@@ -44,7 +44,7 @@ const AddCompany = () => {
     if (editingCompany) {
       // Update the company
       try {
-        const response = await axios.put(`http://localhost:3000/companies/${editingCompany}`, {
+        const response = await axios.put(`https://xoka-hr-management.vercel.app/companies/${editingCompany}`, {
           name: companyName,
         });
 
@@ -66,7 +66,7 @@ const AddCompany = () => {
       const companyId = uuidv4(); // Generate UUID for the new company
 
       try {
-        const response = await axios.post('http://localhost:3000/companies', {
+        const response = await axios.post('https://xoka-hr-management.vercel.app/companies', {
           id: companyId,
           name: companyName,
         });
@@ -83,7 +83,7 @@ const AddCompany = () => {
   // Handle delete company
   const handleDelete = async (companyId: string) => {
     try {
-      await axios.delete(`http://localhost:3000/companies/${companyId}`);
+      await axios.delete(`https://xoka-hr-management.vercel.app/companies/${companyId}`);
       setCompanies((prev) => prev.filter((company) => company.id !== companyId));
       setSuccessMessage('Company deleted successfully!');
     } catch (error) {

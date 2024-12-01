@@ -32,7 +32,7 @@ const DepartmentForm: React.FC = () => {
     const fetchCompanies = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:3000/companies');
+        const response = await axios.get('https://xoka-hr-management.vercel.app/companies');
         setCompanies(response.data);
       } catch (error) {
         console.error('Error fetching companies:', error);
@@ -45,7 +45,7 @@ const DepartmentForm: React.FC = () => {
     const fetchDepartments = async () => {
       setLoading(true);
       try {
-        const response = await axios.get('http://localhost:3000/departments');
+        const response = await axios.get('https://xoka-hr-management.vercel.app/departments');
         setDepartments(response.data);
       } catch (error) {
         console.error('Error fetching departments:', error);
@@ -81,16 +81,16 @@ const DepartmentForm: React.FC = () => {
       try {
         if (editingDepartment) {
           // Update department
-          await axios.put(`http://localhost:3000/departments/${editingDepartment.id}`, values);
+          await axios.put(`https://xoka-hr-management.vercel.app/departments/${editingDepartment.id}`, values);
           setSuccessMessage('Department updated successfully!');
         } else {
           // Add new department
-          await axios.post('http://localhost:3000/departments', values);
+          await axios.post('https://xoka-hr-management.vercel.app/departments', values);
           setSuccessMessage('Department added successfully!');
         }
 
         // Refresh department list
-        const response = await axios.get('http://localhost:3000/departments');
+        const response = await axios.get('https://xoka-hr-management.vercel.app/departments');
         setDepartments(response.data);
         formik.resetForm(); // Reset form after submission
       } catch (error) {
@@ -109,9 +109,9 @@ const DepartmentForm: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:3000/departments/${id}`);
+      await axios.delete(`https://xoka-hr-management.vercel.app/departments/${id}`);
       setSuccessMessage('Department deleted successfully!');
-      const response = await axios.get('http://localhost:3000/departments');
+      const response = await axios.get('https://xoka-hr-management.vercel.app/departments');
       setDepartments(response.data);
     } catch (error) {
       setErrorMessage('Error deleting department');
