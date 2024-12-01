@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from 'react';
 import { Button, TextField, Grid, Paper, Typography, Box, Select, MenuItem, FormControl, InputLabel, Divider } from '@mui/material';
@@ -14,7 +14,6 @@ interface Candidate {
   phone: string;
   position: string;
   companyId: string;
-  appliedAt: string;
 }
 
 const CandidatesPage = () => {
@@ -53,7 +52,6 @@ const CandidatesPage = () => {
       email: '',
       phone: '',
       position: '',
-      appliedAt: new Date().toISOString(),
       companyId: '',
     },
     validationSchema: Yup.object({
@@ -79,7 +77,6 @@ const CandidatesPage = () => {
         console.error('Error saving candidate:', error);
       }
     },
-    
   });
 
   const handleEdit = (candidate: Candidate) => {
@@ -89,7 +86,6 @@ const CandidatesPage = () => {
       email: candidate.email,
       phone: candidate.phone,
       position: candidate.position,
-      appliedAt: candidate.appliedAt ? new Date(candidate.appliedAt) : new Date(),
       companyId: candidate.companyId,
     });
     setEditingCandidate(candidate);
@@ -185,11 +181,11 @@ const CandidatesPage = () => {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button variant="contained" onClick={formik.handleSubmit}>
-              {editingCandidate ? 'Update Candidate' : 'Add Candidate'}
-            </Button>
-          </Box>
+         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+    <Button variant="contained" type="submit">
+      {editingCandidate ? 'Update Candidate' : 'Add Candidate'}
+    </Button>
+  </Box>
         </Grid>
       </Grid>
 
