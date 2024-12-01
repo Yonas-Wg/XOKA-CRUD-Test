@@ -7,6 +7,8 @@ import { Search as SearchIcon, Edit as EditIcon, Delete as DeleteIcon } from '@m
 import { getEmployees, addEmployee, updateEmployee, deleteEmployee } from '../services/EmployeeApiService'; 
 import { Employee, Department, Salary, Company } from '../services/DatabaseService';
 import { useMediaQuery } from '@mui/material';
+import React, { useMemo } from 'react';
+
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -175,25 +177,34 @@ const getSalaryAmountById = (salaryId: string) => {
     setSearchTerm(e.target.value);
   };
 
-  const filteredEmployees = employees.filter((emp) => {
-    const department = emp.department || ''; 
-    return (
-      emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      department.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-  });
-  
-
-  const sortedEmployees = filteredEmployees.sort((a, b) => {
-    const fieldA = a[sortField];
-    const fieldB = b[sortField];
-
-    if (sortOrder === 'asc') {
-      return fieldA > fieldB ? 1 : -1;
-    } else {
-      return fieldA < fieldB ? 1 : -1;
+  const filteredEmployees = useMemo(() => {
+    if (!Array.isArray(employees)) {
+      return []; 
     }
-  });
+  
+    return employees.filter((emp) => {
+      const department = emp.department || '';
+      return (
+        emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        department.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+  }, [employees, searchTerm]);
+  
+  
+  const sortedEmployees = useMemo(() => {
+    return filteredEmployees.sort((a, b) => {
+      const fieldA = a[sortField];
+      const fieldB = b[sortField];
+  
+      if (sortOrder === 'asc') {
+        return fieldA > fieldB ? 1 : -1;
+      } else {
+        return fieldA < fieldB ? 1 : -1;
+      }
+    });
+  }, [filteredEmployees, sortField, sortOrder]);
+  
 
   const [departments, setDepartments] = useState<Department[]>([]);
   const [salaries, setSalaries] = useState<Salary[]>([]);
@@ -207,18 +218,24 @@ const getSalaryAmountById = (salaryId: string) => {
         const departmentResponse = await fetch('http://localhost:3000/departments');
         const salaryResponse = await fetch('http://localhost:3000/salaries');
         const companyResponse = await fetch('http://localhost:3000/companies');
-
+    
+        if (!departmentResponse.ok || !salaryResponse.ok || !companyResponse.ok) {
+          throw new Error('API request failed');
+        }
+    
         const departmentData = await departmentResponse.json();
         const salaryData = await salaryResponse.json();
         const companyData = await companyResponse.json();
-
+    
         setDepartments(departmentData);
-        setSalaries(salaryData); 
-        setCompanies(companyData); 
+        setSalaries(salaryData);
+        setCompanies(companyData);
       } catch (error) {
         console.error('Error fetching data:', error);
+        alert('Failed to fetch data');
       }
     };
+    
 
     fetchData();
   }, []);
