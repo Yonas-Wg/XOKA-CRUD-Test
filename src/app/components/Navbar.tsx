@@ -54,10 +54,10 @@ const Navbar = () => {
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Link href="/" passHref>
             <Image
-              src="/images/hr.jpg" 
+              src="/images/hrr.jpg" 
               alt="Logo"
-              width={70} 
-              height={20} 
+              width={80} 
+              height={100} 
             />
           </Link>
         </Box>
