@@ -204,9 +204,9 @@ const getSalaryAmountById = (salaryId: string) => {
     // Fetch data for department, salary, and company
     const fetchData = async () => {
       try {
-        const departmentResponse = await fetch('http://localhost:3000/departments');
-        const salaryResponse = await fetch('http://localhost:3000/salaries');
-        const companyResponse = await fetch('http://localhost:3000/companies');
+        const departmentResponse = await fetch('https://xoka-hr-management.vercel.app/departments');
+        const salaryResponse = await fetch('https://xoka-hr-management.vercel.app/salaries');
+        const companyResponse = await fetch('https://xoka-hr-management.vercel.app/companies');
 
         const departmentData = await departmentResponse.json();
         const salaryData = await salaryResponse.json();
@@ -397,7 +397,6 @@ const getSalaryAmountById = (salaryId: string) => {
               </Box>
               
               <Typography variant="body2">{getCompanyNameById(emp.companyId)}</Typography>
-
             <Typography variant="body2">{getDepartmentNameById(emp.departmentId)}</Typography>
             <Typography variant="body2">{getSalaryAmountById(emp.salaryId)}</Typography>
         
