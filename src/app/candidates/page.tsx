@@ -14,6 +14,7 @@ interface Candidate {
   phone: string;
   position: string;
   companyId: string;
+  appliedAt: string; 
 }
 
 const CandidatesPage = () => {
