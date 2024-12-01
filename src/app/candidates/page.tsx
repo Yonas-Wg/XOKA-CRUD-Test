@@ -14,7 +14,6 @@ interface Candidate {
   phone: string;
   position: string;
   companyId: string;
-  appliedAt: string;
 }
 
 const CandidatesPage = () => {
@@ -31,7 +30,7 @@ const CandidatesPage = () => {
         console.error('Error fetching companies:', error);
       }
     };
-
+  
     const fetchCandidates = async () => {
       try {
         const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
@@ -40,10 +39,11 @@ const CandidatesPage = () => {
         console.error('Error fetching candidates:', error);
       }
     };
-
+  
     fetchCompanies();
     fetchCandidates();
   }, []);
+  
 
   const formik = useFormik({
     initialValues: {
@@ -52,7 +52,6 @@ const CandidatesPage = () => {
       email: '',
       phone: '',
       position: '',
-      appliedAt: new Date().toISOString(),
       companyId: '',
     },
     validationSchema: Yup.object({
@@ -87,7 +86,6 @@ const CandidatesPage = () => {
       email: candidate.email,
       phone: candidate.phone,
       position: candidate.position,
-      appliedAt: candidate.appliedAt ? new Date(candidate.appliedAt) : new Date(),
       companyId: candidate.companyId,
     });
     setEditingCandidate(candidate);
@@ -183,11 +181,11 @@ const CandidatesPage = () => {
           </FormControl>
         </Grid>
         <Grid item xs={12}>
-          <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Button variant="contained" onClick={formik.handleSubmit}>
-              {editingCandidate ? 'Update Candidate' : 'Add Candidate'}
-            </Button>
-          </Box>
+         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+    <Button variant="contained" type="submit">
+      {editingCandidate ? 'Update Candidate' : 'Add Candidate'}
+    </Button>
+  </Box>
         </Grid>
       </Grid>
 
@@ -198,33 +196,26 @@ const CandidatesPage = () => {
 
       <Paper sx={{ padding: 2 }}>
         {candidates.map((candidate) => (
-          <Paper key={candidate.id} sx={{ mb: 2, padding: 2, display: 'flex', justifyContent: 'space-between' }}>
+          <Box key={candidate.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+            <Typography>{candidate.firstName} {candidate.lastName}</Typography>
             <Box>
-              <Typography>
-                <strong>Name:</strong> {candidate.firstName} {candidate.lastName}
-              </Typography>
-              <Typography>
-                <strong>Email:</strong> {candidate.email}
-              </Typography>
-              <Typography>
-                <strong>Phone:</strong> {candidate.phone}
-              </Typography>
-              <Typography>
-                <strong>Position:</strong> {candidate.position}
-              </Typography>
-              <Typography>
-                <strong>Company:</strong> {companies.find((company) => company.id === candidate.companyId)?.name}
-              </Typography>
-            </Box>
-            <Box>
-              <Button  color="primary" onClick={() => handleEdit(candidate)}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => handleEdit(candidate)}
+                sx={{ marginRight: 2 }}
+              >
                 Edit
               </Button>
-              <Button  color="error" onClick={() => handleDelete(candidate.id)}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => handleDelete(candidate.id)}
+              >
                 Delete
               </Button>
             </Box>
-          </Paper>
+          </Box>
         ))}
       </Paper>
     </Box>

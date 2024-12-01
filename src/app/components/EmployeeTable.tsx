@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button, TextField, Avatar, Card, Typography, Box, Grid, IconButton, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
+import { Button, TextField, Card, Typography, Box, Grid, IconButton, MenuItem, Select, FormControl, InputLabel, FormHelperText } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import { Formik, Field, Form } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { Search as SearchIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { getEmployees, addEmployee, updateEmployee, deleteEmployee } from '../services/EmployeeApiService'; 
@@ -34,10 +34,11 @@ const EmployeeTable = () => {
 
   const isMobile = useMediaQuery('(max-width: 768px)'); 
 
-const getCompanyNameById = (companyId: string) => {
-  const company = companies.find((company) => company.id === companyId);
-  return company ? company.name : 'Unknown';
-};
+  const getCompanyNameById = (companyId: string) => {
+    const company = companies.find((company) => company.id === companyId);
+    return company ? company.name : 'Unknown';
+  };
+  
 
 // Function to get the department name by its ID
 const getDepartmentNameById = (departmentId: string) => {
@@ -61,10 +62,7 @@ const getSalaryAmountById = (salaryId: string) => {
     };
     fetchEmployees();
   }, []);
-
-  const handleInputChange = (field: keyof Employee, value: any) => {
-    setForm({ ...form, [field]: value });
-  };
+  
 
   useEffect(() => {
     setForm({
@@ -399,6 +397,7 @@ const getSalaryAmountById = (salaryId: string) => {
               </Box>
               
               <Typography variant="body2">{getCompanyNameById(emp.companyId)}</Typography>
+
             <Typography variant="body2">{getDepartmentNameById(emp.departmentId)}</Typography>
             <Typography variant="body2">{getSalaryAmountById(emp.salaryId)}</Typography>
         
