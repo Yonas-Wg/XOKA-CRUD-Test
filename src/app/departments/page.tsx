@@ -36,11 +36,12 @@ const DepartmentForm: React.FC = () => {
         setCompanies(response.data);
       } catch (error) {
         console.error('Error fetching companies:', error);
+        setErrorMessage('Error fetching companies');
       } finally {
         setLoading(false);
       }
     };
-
+  
     const fetchDepartments = async () => {
       setLoading(true);
       try {
@@ -48,14 +49,23 @@ const DepartmentForm: React.FC = () => {
         setDepartments(response.data);
       } catch (error) {
         console.error('Error fetching departments:', error);
+        setErrorMessage('Error fetching departments');
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchCompanies();
     fetchDepartments();
   }, []);
+
+  {loading && <CircularProgress />}
+{errorMessage && (
+  <Alert severity="error" sx={{ marginTop: 2 }}>
+    {errorMessage}
+  </Alert>
+)}
+
 
   const formik = useFormik({
     initialValues: {

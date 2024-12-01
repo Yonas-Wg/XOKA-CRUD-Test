@@ -1,5 +1,3 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { Button, TextField, Grid, Paper, Typography, Box, Select, MenuItem, FormControl, InputLabel, Divider } from '@mui/material';
 import { useFormik } from 'formik';
@@ -27,10 +25,8 @@ const CandidatesPage = () => {
       try {
         const response = await axios.get<{ id: string; name: string }[]>('http://localhost:3000/companies');
         setCompanies(response.data);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('Error fetching companies:', error.message);
-        }
+      } catch (error) {
+        console.error('Error fetching companies:', error);
       }
     };
   
@@ -38,10 +34,8 @@ const CandidatesPage = () => {
       try {
         const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
         setCandidates(response.data);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('Error fetching candidates:', error.message);
-        }
+      } catch (error) {
+        console.error('Error fetching candidates:', error);
       }
     };
   
@@ -79,10 +73,8 @@ const CandidatesPage = () => {
         setEditingCandidate(null);
         const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
         setCandidates(response.data);
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          console.error('Error saving candidate:', error.message);
-        }
+      } catch (error) {
+        console.error('Error saving candidate:', error);
       }
     },
     
@@ -206,33 +198,26 @@ const CandidatesPage = () => {
 
       <Paper sx={{ padding: 2 }}>
         {candidates.map((candidate) => (
-          <Paper key={candidate.id} sx={{ mb: 2, padding: 2, display: 'flex', justifyContent: 'space-between' }}>
+          <Box key={candidate.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+            <Typography>{candidate.firstName} {candidate.lastName}</Typography>
             <Box>
-              <Typography>
-                <strong>Name:</strong> {candidate.firstName} {candidate.lastName}
-              </Typography>
-              <Typography>
-                <strong>Email:</strong> {candidate.email}
-              </Typography>
-              <Typography>
-                <strong>Phone:</strong> {candidate.phone}
-              </Typography>
-              <Typography>
-                <strong>Position:</strong> {candidate.position}
-              </Typography>
-              <Typography>
-                <strong>Company:</strong> {companies.find((company) => company.id === candidate.companyId)?.name}
-              </Typography>
-            </Box>
-            <Box>
-              <Button  color="primary" onClick={() => handleEdit(candidate)}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => handleEdit(candidate)}
+                sx={{ marginRight: 2 }}
+              >
                 Edit
               </Button>
-              <Button  color="error" onClick={() => handleDelete(candidate.id)}>
+              <Button
+                variant="outlined"
+                color="secondary"
+                onClick={() => handleDelete(candidate.id)}
+              >
                 Delete
               </Button>
             </Box>
-          </Paper>
+          </Box>
         ))}
       </Paper>
     </Box>

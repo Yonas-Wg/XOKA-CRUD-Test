@@ -34,10 +34,11 @@ const EmployeeTable = () => {
 
   const isMobile = useMediaQuery('(max-width: 768px)'); 
 
-const getCompanyNameById = (companyId: string) => {
-  const company = companies.find((company) => company.id === companyId);
-  return company ? company.name : 'Unknown';
-};
+  const getCompanyNameById = (companyId: string) => {
+    const company = companies.find((company) => company.id === companyId);
+    return company ? company.name : 'Unknown';
+  };
+  
 
 // Function to get the department name by its ID
 const getDepartmentNameById = (departmentId: string) => {
@@ -61,7 +62,7 @@ const getSalaryAmountById = (salaryId: string) => {
     };
     fetchEmployees();
   }, []);
-
+  
 
   useEffect(() => {
     setForm({
@@ -396,6 +397,7 @@ const getSalaryAmountById = (salaryId: string) => {
               </Box>
               
               <Typography variant="body2">{getCompanyNameById(emp.companyId)}</Typography>
+
             <Typography variant="body2">{getDepartmentNameById(emp.departmentId)}</Typography>
             <Typography variant="body2">{getSalaryAmountById(emp.salaryId)}</Typography>
         
