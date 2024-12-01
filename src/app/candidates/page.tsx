@@ -27,23 +27,28 @@ const CandidatesPage = () => {
       try {
         const response = await axios.get<{ id: string; name: string }[]>('http://localhost:3000/companies');
         setCompanies(response.data);
-      } catch (error) {
-        console.error('Error fetching companies:', error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error('Error fetching companies:', error.message);
+        }
       }
     };
-
+  
     const fetchCandidates = async () => {
       try {
         const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
         setCandidates(response.data);
-      } catch (error) {
-        console.error('Error fetching candidates:', error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error('Error fetching candidates:', error.message);
+        }
       }
     };
-
+  
     fetchCompanies();
     fetchCandidates();
   }, []);
+  
 
   const formik = useFormik({
     initialValues: {
@@ -74,10 +79,13 @@ const CandidatesPage = () => {
         setEditingCandidate(null);
         const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
         setCandidates(response.data);
-      } catch (error) {
-        console.error('Error saving candidate:', error);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          console.error('Error saving candidate:', error.message);
+        }
       }
     },
+    
   });
 
   const handleEdit = (candidate: Candidate) => {
