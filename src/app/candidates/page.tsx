@@ -197,7 +197,7 @@ const CandidatesPage = () => {
         Candidates List :
       </Typography>
 
-      <Paper sx={{ padding: 2 }}>
+      <Paper sx={{ padding: 2 , marginBottom:10}}>
       {candidates.map((candidate) => (
         <Paper key={candidate.id} sx={{ padding: 3, mb: 3, display: 'flex', justifyContent: 'space-between', boxShadow: 3 }}>
           <Box sx={{ flex: 1 }}>
