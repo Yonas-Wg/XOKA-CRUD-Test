@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Button, TextField, Grid, Paper, Typography, Box, Select, MenuItem, FormControl, InputLabel, Divider } from '@mui/material';
+import { Button, TextField, Grid, Paper, Typography, Box, Select, MenuItem, FormControl, InputLabel, Divider, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -16,37 +16,37 @@ interface Candidate {
   phone: string;
   position: string;
   companyId: string;
-  appliedAt: string; 
+  appliedAt: string;
 }
 
 const CandidatesPage = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [companies, setCompanies] = useState<{ id: string; name: string }[]>([]);
+  const [companies, setCompanies] = useState<{ [key: string]: string }>({});
   const [editingCandidate, setEditingCandidate] = useState<Candidate | null>(null);
+  const [openDialog, setOpenDialog] = useState(false); // State to control dialog visibility
+  const [candidateToDelete, setCandidateToDelete] = useState<string | null>(null); // State to store the candidate id to delete
 
   useEffect(() => {
-    const fetchCompanies = async () => {
+    // Fetch candidates and companies on initial load
+    const fetchCandidatesData = async () => {
       try {
-        const response = await axios.get<{ id: string; name: string }[]>('http://localhost:3000/companies');
-        setCompanies(response.data);
+        const candidatesResponse = await axios.get<Candidate[]>('http://localhost:3000/candidates');
+        setCandidates(candidatesResponse.data);
+
+        // Fetch companies list from the /companies endpoint
+        const companiesResponse = await axios.get<{ id: string; name: string }[]>('http://localhost:3000/companies');
+        const companiesData: { [key: string]: string } = {};
+        companiesResponse.data.forEach(company => {
+          companiesData[company.id] = company.name;
+        });
+        setCompanies(companiesData);
       } catch (error) {
-        console.error('Error fetching companies:', error);
+        console.error('Error fetching data:', error);
       }
     };
-  
-    const fetchCandidates = async () => {
-      try {
-        const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
-        setCandidates(response.data);
-      } catch (error) {
-        console.error('Error fetching candidates:', error);
-      }
-    };
-  
-    fetchCompanies();
-    fetchCandidates();
+
+    fetchCandidatesData();
   }, []);
-  
 
   const formik = useFormik({
     initialValues: {
@@ -75,8 +75,9 @@ const CandidatesPage = () => {
           toast.success('Added Successfully!');
         }
         formik.resetForm();
-       
         setEditingCandidate(null);
+
+        // Fetch candidates again after update
         const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
         setCandidates(response.data);
       } catch (error) {
@@ -97,14 +98,28 @@ const CandidatesPage = () => {
     setEditingCandidate(candidate);
   };
 
-  const handleDelete = async (id: string) => {
-    try {
-      await axios.delete(`http://localhost:3000/candidates/${id}`);
-      toast.success('Deleted Successfully!'),
-      setCandidates((prev) => prev.filter((candidate) => candidate.id !== id));
-    } catch (error) {
-      console.error('Error deleting candidate:', error);
+  const handleDeleteConfirmation = (id: string) => {
+    setCandidateToDelete(id);
+    setOpenDialog(true);
+  };
+
+  const handleDelete = async () => {
+    if (candidateToDelete) {
+      try {
+        await axios.delete(`http://localhost:3000/candidates/${candidateToDelete}`);
+        toast.success('Deleted Successfully!');
+        setCandidates((prev) => prev.filter((candidate) => candidate.id !== candidateToDelete));
+        setOpenDialog(false); // Close dialog after successful deletion
+      } catch (error) {
+        console.error('Error deleting candidate:', error);
+        toast.error('Failed to delete candidate');
+      }
     }
+  };
+
+  const handleDialogClose = () => {
+    setOpenDialog(false); // Close dialog without deletion
+    setCandidateToDelete(null);
   };
 
   return (
@@ -180,9 +195,9 @@ const CandidatesPage = () => {
                 onBlur={formik.handleBlur('companyId')}
                 error={formik.touched.companyId && Boolean(formik.errors.companyId)}
               >
-                {companies.map((company) => (
-                  <MenuItem key={company.id} value={company.id}>
-                    {company.name}
+                {Object.keys(companies).map((companyId) => (
+                  <MenuItem key={companyId} value={companyId}>
+                    {companies[companyId]}
                   </MenuItem>
                 ))}
               </Select>
@@ -203,44 +218,49 @@ const CandidatesPage = () => {
         Candidates List :
       </Typography>
 
-      <Paper sx={{ padding: 2 , marginBottom:10}}>
-      {candidates.map((candidate) => (
-        <Paper key={candidate.id} sx={{ padding: 3, mb: 3, display: 'flex', justifyContent: 'space-between', boxShadow: 3 }}>
-           <Avatar
-    sx={{ width: 66, height: 66, mr: 2 }} 
-    alt={`${candidate.firstName} ${candidate.lastName}`}
-  >
-    {candidate.firstName[0]}{candidate.lastName[0]}
-  </Avatar>
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              {candidate.firstName} {candidate.lastName}
-            </Typography>
-            <Typography variant="body1" color="textSecondary">Email: {candidate.email}</Typography>
-            <Typography variant="body1" color="textSecondary">Phone: {candidate.phone}</Typography>
-            <Typography variant="body1" color="textSecondary">Position: {candidate.position}</Typography>
-            <Typography variant="body2" color="textSecondary">Applied At: {new Date(candidate.appliedAt).toLocaleString()}</Typography>
-          </Box>
-          
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-            <Button
-              color="primary"
-              onClick={() => handleEdit(candidate)}
-              sx={{ mb: 1, width: '100%' }}
-            >
-              Edit
-            </Button>
-            <Button
-              color="error"
-              onClick={() => handleDelete(candidate.id)}
-              sx={{ width: '100%' }}
-            >
-              Delete
-            </Button>
-          </Box>
-        </Paper>
-      ))}
+      <Paper sx={{ padding: 2, marginBottom: 10 }}>
+        {candidates.map((candidate) => (
+          <Paper key={candidate.id} sx={{ padding: 3, mb: 3, display: 'flex', justifyContent: 'space-between', boxShadow: 3 }}>
+            <Avatar sx={{ width: 66, height: 66, mr: 2 }} alt={`${candidate.firstName} ${candidate.lastName}`}>
+              {candidate.firstName[0]}{candidate.lastName[0]}
+            </Avatar>
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                {candidate.firstName} {candidate.lastName}
+              </Typography>
+              <Typography variant="body1" color="textSecondary">Email: {candidate.email}</Typography>
+              <Typography variant="body1" color="textSecondary">Phone: {candidate.phone}</Typography>
+              <Typography variant="body1" color="textSecondary">Position: {candidate.position}</Typography>
+              <Typography variant="body2" color="textSecondary">Applied At: {new Date(candidate.appliedAt).toLocaleString()}</Typography>
+              <Typography variant="body2" color="textSecondary">Company: {companies[candidate.companyId]}</Typography>
+            </Box>
+            <Box>
+              <Button color="primary" onClick={() => handleEdit(candidate)}>
+                Edit
+              </Button>
+              <Button color="error" onClick={() => handleDeleteConfirmation(candidate.id)}>
+                Delete
+              </Button>
+            </Box>
+          </Paper>
+        ))}
       </Paper>
+
+      {/* Confirmation Dialog */}
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>Delete Confirmation</DialogTitle>
+        <DialogContent>
+          Are you sure you want to delete this candidate? This action cannot be undone.
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
