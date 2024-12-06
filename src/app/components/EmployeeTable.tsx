@@ -8,7 +8,9 @@ import { getEmployees, addEmployee, updateEmployee, deleteEmployee } from '../se
 import { Employee, Department, Salary, Company } from '../services/DatabaseService';
 import { useMediaQuery } from '@mui/material';
 import React, { useMemo } from 'react';
-
+import Avatar from '@mui/material/Avatar';
+import PersonIcon from '@mui/icons-material/Person';
+import { toast } from 'react-toastify';
 
 const validationSchema = Yup.object({
   name: Yup.string().required('Name is required'),
@@ -98,6 +100,8 @@ const getSalaryAmountById = (salaryId: string) => {
     };
   
     await addEmployee(newEmployee);
+    setIsEdit(false); 
+    toast.success('Added Successfully!');
   
     // Fetch the updated list of employees
     const updatedEmployees = await getEmployees();
@@ -133,7 +137,7 @@ const getSalaryAmountById = (salaryId: string) => {
    // @ts-expect-error: Ignoring type mismatch between payload and Employee type
 await updateEmployee(values.id, updatedEmployeePayload);
 
-
+toast.success('Updated Successfully!');
   
     // Fetch the updated list of employees
     const updatedEmployees = await getEmployees();
@@ -162,6 +166,7 @@ await updateEmployee(values.id, updatedEmployeePayload);
   // Delete employee
   const handleDeleteEmployee = async (id: string) => {
     await deleteEmployee(id);
+    toast.success('Deleted Successfully!');
     const updatedEmployees = await getEmployees();
     setEmployees(updatedEmployees);
   };
@@ -245,7 +250,7 @@ await updateEmployee(values.id, updatedEmployeePayload);
       <Typography variant="h4" gutterBottom sx={{ color: 'primary.main' }}>
         Manage Employees
       </Typography>
-
+      
       <Formik
   initialValues={form}
   validationSchema={validationSchema}
@@ -396,27 +401,41 @@ await updateEmployee(values.id, updatedEmployeePayload);
       </Box>
     </Box>
 
+
       {/* Employee Table */}
       <Grid container spacing={2} sx={{ marginTop: 2 }}>
         {sortedEmployees.map((emp) => (
           <Grid item xs={12} sm={6} md={4} key={emp.id}>
-            <Card sx={{ padding: 2, boxShadow: 3 }}>
-              <Box display="flex" justifyContent="space-between">
-                <Typography variant="h6">{emp.name}</Typography>
-                <div>
-                  <IconButton onClick={() => handleEditEmployee(emp)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleDeleteEmployee(emp.id)}>
-                    <DeleteIcon sx={{color:'red'}} />
-                  </IconButton>
-                </div>
-              </Box>
-              
-              <Typography variant="body2">{getCompanyNameById(emp.companyId)}</Typography>
-            <Typography variant="body2">{getDepartmentNameById(emp.departmentId)}</Typography>
-            <Typography variant="body2">{getSalaryAmountById(emp.salaryId)}</Typography>
-        
+            <Card sx={{ padding: 2, boxShadow: 3, marginBottom: 2 }}>
+      <Box display="flex" alignItems="center" gap={2}>
+        <Avatar sx={{ bgcolor: 'primary.main', width: 56, height: 56 }}>
+          <PersonIcon />
+        </Avatar>
+        <Box flex={1}>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h6" fontWeight="bold">
+              {emp.name}
+            </Typography>
+            <Box>
+              <IconButton onClick={() => handleEditEmployee(emp)}>
+                <EditIcon />
+              </IconButton>
+              <IconButton onClick={() => handleDeleteEmployee(emp.id)}>
+                <DeleteIcon sx={{ color: 'red' }} />
+              </IconButton>
+            </Box>
+          </Box>
+          <Typography variant="body2" color="text.secondary">
+            {getCompanyNameById(emp.companyId)}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {getDepartmentNameById(emp.departmentId)}
+          </Typography>
+          <Typography variant="body2" color="primary">
+            Salary: {getSalaryAmountById(emp.salaryId)}
+          </Typography>
+        </Box>
+      </Box>
             </Card>
           </Grid>
         ))}

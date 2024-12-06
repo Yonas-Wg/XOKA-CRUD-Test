@@ -1,6 +1,17 @@
+'use client';
 import { Box, Typography, Button, Container, Grid } from '@mui/material';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
+  const [isClient, setIsClient] = useState(false);
+
+  // Set the component to be client-side only
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) return null; // Render nothing on the server side
+
   return (
     <Container maxWidth="md" sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
       {/* Welcome Title */}
@@ -12,8 +23,10 @@ export default function Home() {
           textAlign: 'center', 
           lineHeight: 1.2, 
           fontSize: { xs: '2rem', sm: '3rem', md: '4rem' },
-          marginBottom: 3 // Spacing below the heading
+          marginBottom: 3
         }}
+        onMouseEnter={() => console.log("Mouse Entered")}
+        onMouseLeave={() => console.log("Mouse Left")}
       >
         Welcome To The HR
         <br />
@@ -30,7 +43,13 @@ export default function Home() {
         <Button 
           variant="contained" 
           color="primary" 
-          sx={{ padding: '10px 20px', boxShadow: 2, '&:hover': { boxShadow: 6 } }} 
+          sx={{ 
+            padding: '10px 20px', 
+            boxShadow: 2, 
+            '&:hover': { boxShadow: 6 },
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease', 
+            '&:active': { transform: 'scale(0.98)' } 
+          }} 
           href="/employees"
         >
           Get Started
