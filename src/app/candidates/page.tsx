@@ -5,6 +5,8 @@ import { Button, TextField, Grid, Paper, Typography, Box, Select, MenuItem, Form
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
+import Avatar from '@mui/material/Avatar';
+import { toast } from 'react-toastify';
 
 interface Candidate {
   id: string;
@@ -67,10 +69,13 @@ const CandidatesPage = () => {
       try {
         if (editingCandidate) {
           await axios.put(`http://localhost:3000/candidates/${editingCandidate.id}`, values);
+          toast.success('Updated Successfully!');
         } else {
           await axios.post('http://localhost:3000/candidates', values);
+          toast.success('Added Successfully!');
         }
         formik.resetForm();
+       
         setEditingCandidate(null);
         const response = await axios.get<Candidate[]>('http://localhost:3000/candidates');
         setCandidates(response.data);
@@ -95,6 +100,7 @@ const CandidatesPage = () => {
   const handleDelete = async (id: string) => {
     try {
       await axios.delete(`http://localhost:3000/candidates/${id}`);
+      toast.success('Deleted Successfully!'),
       setCandidates((prev) => prev.filter((candidate) => candidate.id !== id));
     } catch (error) {
       console.error('Error deleting candidate:', error);
@@ -200,6 +206,12 @@ const CandidatesPage = () => {
       <Paper sx={{ padding: 2 , marginBottom:10}}>
       {candidates.map((candidate) => (
         <Paper key={candidate.id} sx={{ padding: 3, mb: 3, display: 'flex', justifyContent: 'space-between', boxShadow: 3 }}>
+           <Avatar
+    sx={{ width: 66, height: 66, mr: 2 }} 
+    alt={`${candidate.firstName} ${candidate.lastName}`}
+  >
+    {candidate.firstName[0]}{candidate.lastName[0]}
+  </Avatar>
           <Box sx={{ flex: 1 }}>
             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
               {candidate.firstName} {candidate.lastName}
